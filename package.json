@@ -1,0 +1,16 @@
+{
+  "name": "har-redaction-fixtures",
+  "version": "0.1.0",
+  "description": "Offline synthetic HAR redaction regression fixtures and a bounded checker",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test",
+    "check": "node bin/check.mjs fixtures/reference",
+    "fixtures:generate": "node scripts/generate-fixtures.mjs"
+  }
+}

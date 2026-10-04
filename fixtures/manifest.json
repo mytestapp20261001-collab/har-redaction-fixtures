@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "auth-header",
+      "file": "auth-header.har",
+      "description": "Authorization request header",
+      "marker": "HARFIX_SYNTHETIC_AUTH_HEADER_SECRET",
+      "codecs": {}
+    },
+    {
+      "id": "cookie-header",
+      "file": "cookie-header.har",
+      "description": "Cookie request header with a benign cookie",
+      "marker": "HARFIX_SYNTHETIC_COOKIE_HEADER_SECRET",
+      "codecs": {}
+    },
+    {
+      "id": "cookie-arrays",
+      "file": "cookie-arrays.har",
+      "description": "Both request and response cookie arrays",
+      "marker": "HARFIX_SYNTHETIC_COOKIE_ARRAYS_SECRET",
+      "codecs": {}
+    },
+    {
+      "id": "set-cookie",
+      "file": "set-cookie.har",
+      "description": "Set-Cookie response header and attributes",
+      "marker": "HARFIX_SYNTHETIC_SET_COOKIE_SECRET",
+      "codecs": {}
+    },
+    {
+      "id": "custom-auth-header",
+      "file": "custom-auth-header.har",
+      "description": "Application-specific X-Api-Key header",
+      "marker": "HARFIX_SYNTHETIC_CUSTOM_AUTH_HEADER_SECRET",
+      "codecs": {}
+    },
+    {
+      "id": "url-query",
+      "file": "url-query.har",
+      "description": "Secret in both URL and queryString array",
+      "marker": "HARFIX_SYNTHETIC_URL_QUERY_SECRET",
+      "codecs": {}
+    },
+    {
+      "id": "percent-encoded-query",
+      "file": "percent-encoded-query.har",
+      "description": "Fully percent-encoded query value plus its parsed copy",
+      "marker": "HARFIX_SYNTHETIC_PERCENT_ENCODED_QUERY_SECRET",
+      "codecs": {
+        "/log/entries/0/request/url": "percent"
+      }
+    },
+    {
+      "id": "form-params",
+      "file": "form-params.har",
+      "description": "HAR form postData.params values",
+      "marker": "HARFIX_SYNTHETIC_FORM_PARAMS_SECRET",
+      "codecs": {}
+    },
+    {
+      "id": "json-request-body",
+      "file": "json-request-body.har",
+      "description": "Nested JSON request text with preserved public fields",
+      "marker": "HARFIX_SYNTHETIC_JSON_REQUEST_BODY_SECRET",
+      "codecs": {
+        "/log/entries/0/request/postData/text": "json"
+      }
+    },
+    {
+      "id": "text-response",
+      "file": "text-response.har",
+      "description": "Secret embedded in response text",
+      "marker": "HARFIX_SYNTHETIC_TEXT_RESPONSE_SECRET",
+      "codecs": {}
+    },
+    {
+      "id": "base64-response",
+      "file": "base64-response.har",
+      "description": "Secret in a HAR base64-encoded response body",
+      "marker": "HARFIX_SYNTHETIC_BASE64_RESPONSE_SECRET",
+      "codecs": {
+        "/log/entries/0/response/content/text": "base64"
+      }
+    },
+    {
+      "id": "repeated-marker",
+      "file": "repeated-marker.har",
+      "description": "One marker repeated within and across fields",
+      "marker": "HARFIX_SYNTHETIC_REPEATED_MARKER_SECRET",
+      "codecs": {}
+    }
+  ]
+}
