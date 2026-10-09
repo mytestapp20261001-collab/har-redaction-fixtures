@@ -75,7 +75,7 @@ The suite does not cover every encoding, compressed/binary bodies, encrypted/has
 
 Content size fields preserve the original synthetic recording metadata rather than pretending the reference is a new wire capture. The body contents themselves remain available in each expected reference.
 
-Missing, malformed, or oversized required files fail. Duplicate object keys in outer HAR JSON or embedded JSON bodies also fail, including equivalent escaped keys; silently discarded duplicate fields must not hide a marker. Unexpected `.har` files fail; unrelated files are ignored. Keep a candidate directory dedicated to these twelve outputs. The bundled manifest and raw baselines are trusted test inputs: editing them changes the test, not the quality of your sanitizer.
+Required files must be regular files containing valid UTF-8 JSON. Missing, malformed, or oversized required files fail. Non-regular inputs such as FIFOs are rejected without waiting for a writer. Duplicate object keys in outer HAR JSON or embedded JSON bodies also fail, including equivalent escaped keys; silently discarded duplicate fields must not hide a marker. Unexpected `.har` files fail; unrelated files are ignored. Keep a candidate directory dedicated to these twelve outputs. The bundled manifest and raw baselines are trusted test inputs: editing them changes the test, not the quality of your sanitizer.
 
 ## Maintain the corpus
 

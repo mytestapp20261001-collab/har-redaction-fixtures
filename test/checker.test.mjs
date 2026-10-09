@@ -209,3 +209,42 @@ test('generator is byte-for-byte deterministic', async () => {
   assert.equal(run.status, 0, run.stderr);
   assert.deepEqual(await snapshot(), before);
 });
+
+
+test('invalid UTF-8 in a replacement slot fails instead of silently repairing bytes', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'har-invalid-utf8-test-'));
+  try {
+    await cp(join(root, 'fixtures/reference'), directory, { recursive: true });
+    const fixture = get('auth-header');
+    const clean = await readFile(join(directory, fixture.file));
+    const marker = Buffer.from('[REDACTED]');
+    const offset = clean.indexOf(marker);
+    assert.ok(offset >= 0);
+    for (const invalid of [Buffer.from([0xff]), Buffer.from([0xc3, 0x28]), Buffer.from([0xed, 0xa0, 0x80])]) {
+      await writeFile(join(directory, fixture.file), Buffer.concat([clean.subarray(0, offset), invalid, clean.subarray(offset + marker.length)]));
+      const report = await checkDirectory(directory);
+      assert.equal(report.failed, 1);
+      assert.equal(report.results[0].issues[0].detail, 'Invalid JSON');
+      const result = cli([directory, '--json']);
+      assert.equal(result.status, 1);
+      assert.equal(JSON.parse(result.stdout).failed, 1);
+    }
+  } finally { await rm(directory, { recursive: true, force: true }); }
+});
+
+test('FIFO candidate files are rejected without waiting for a writer', { skip: process.platform === 'win32' }, async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'har-fifo-test-'));
+  try {
+    await cp(join(root, 'fixtures/reference'), directory, { recursive: true });
+    const file = join(directory, cases[0].file);
+    await rm(file);
+    const setup = spawnSync('mkfifo', [file], { encoding: 'utf8', timeout: 2000 });
+    assert.equal(setup.status, 0, setup.stderr);
+    const result = spawnSync(process.execPath, ['bin/check.mjs', directory, '--json'], { cwd: root, encoding: 'utf8', timeout: 3000 });
+    assert.equal(result.error, undefined, result.error?.message);
+    assert.equal(result.status, 1, result.stderr);
+    const report = JSON.parse(result.stdout);
+    assert.equal(report.failed, 1);
+    assert.equal(report.results[0].issues[0].detail, 'Cannot read fixture file');
+  } finally { await rm(directory, { recursive: true, force: true }); }
+});

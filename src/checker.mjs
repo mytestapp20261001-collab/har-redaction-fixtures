@@ -1,4 +1,6 @@
 import { open, readFile, readdir } from 'node:fs/promises';
+import { constants } from 'node:fs';
+import { TextDecoder } from 'node:util';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 
@@ -139,7 +141,8 @@ export function checkFixture(candidate, baseline, fixture, markers) {
 }
 
 async function readCandidate(path) {
-  const handle = await open(path, 'r');
+  // Do not block opening FIFOs before fstat can reject non-regular inputs.
+  const handle = await open(path, constants.O_RDONLY | constants.O_NONBLOCK);
   try {
     const stat = await handle.stat();
     if (!stat.isFile()) throw new Error('not-file');
@@ -152,7 +155,10 @@ async function readCandidate(path) {
       count += bytesRead;
     }
     if (count > MAX_BYTES) throw new Error('too-large');
-    return parseUniqueJson(buffer.subarray(0, count).toString('utf8'));
+    let text;
+    try { text = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(buffer.subarray(0, count)); }
+    catch { throw new SyntaxError('Invalid UTF-8'); }
+    return parseUniqueJson(text);
   } finally { await handle.close(); }
 }
 
